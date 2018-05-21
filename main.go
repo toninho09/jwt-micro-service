@@ -13,8 +13,8 @@ import (
 )
 
 const (
-	privKeyPath = "app.rsa"
-	pubKeyPath  = "app.rsa.pub"
+	privKeyPath = "cert/app.rsa"
+	pubKeyPath  = "cert/app.rsa.pub"
 )
 
 var (
