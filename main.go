@@ -155,7 +155,7 @@ func JsonResponse(response interface{}, w http.ResponseWriter) {
 		return
 	}
 
-	w.WriteHeader(http.StatusOK)
 	w.Header().Set("Content-Type", "application/json")
+	w.WriteHeader(http.StatusOK)
 	w.Write(json)
 }
