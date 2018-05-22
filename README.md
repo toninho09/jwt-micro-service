@@ -25,7 +25,7 @@ docker run -d --name jwt-micro-service -p 80:80 -v /you/cert/:/root/cert/ jwt-mi
 Como alternativa pode-se usar a imagem do docker hub `toninho09/jwt-micro-service`, que pode ser baixada utilizando o comando
  
 ````shell
-    docker pull toninho09/jwt-micro-service
+docker pull toninho09/jwt-micro-service
 ````
  
  
