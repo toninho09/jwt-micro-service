@@ -77,8 +77,10 @@ func VerifyHandler(w http.ResponseWriter, r *http.Request) {
 
 	var tokenReceive Token
 	err := json.NewDecoder(r.Body).Decode(&tokenReceive)
-	fatal(err)
-
+	if err != nil{
+		w.WriteHeader(http.StatusUnauthorized)
+		return
+	}
 	token,err := jwt.Parse(tokenReceive.Token, func(token *jwt.Token) (interface{}, error) {
 		return verifyKey,nil
 	})
