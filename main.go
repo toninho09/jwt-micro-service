@@ -64,7 +64,7 @@ func StartServer() {
 	http.HandleFunc("/create", CreateHandler)
 	http.HandleFunc("/verify", VerifyHandler)
 	log.Println("Now listening...")
-	http.ListenAndServe(":8080", nil)
+	http.ListenAndServe(":80", nil)
 }
 
 func main() {

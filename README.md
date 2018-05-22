@@ -5,45 +5,43 @@ Api utilizada para criar e verificar JWT
 
 ## Configurações
 
-As configurações são feitas utilizando variáveis de ambiente 
-
-* PORT : Configura a porta que o serviço estará disponível, default  `8080` 
-* ENV : Define o ambiente em que o sistema está rodando, Valores `DEV` , `PROD`
-
-Copie o arquivo de autenticação do firebase para o arquivo `api.json`
+Copie os certificados para `/root/cert/app.rsa` e `/root/cert/app.rsa.pub`, o serviço já tem 
+os certificados para exemplo, mas é recomendado que seja utilizado certificados diferentes 
+no ambiente de produção
 
 ## Docker
 
 Para criar a imagem da aplicação utilizar o comando
 
 ````shell
-docker build -t auth .
+docker build -t jwt-micro-service .
 ````
 
 Para rodar utilizando a imagem do docker
 ````shell
-docker run -d --name micro-auth-firebase -p 80:8080 -v /you/api.json:/root/api.json auth
+docker run -d --name jwt-micro-service -p 80:80 -v /you/cert/:/root/cert/ jwt-micro-service
 ````
  
- Como alternativa pode-se usar a imagem do docker hub `toninho09/firebase-auth-microservice`, que pode ser baixada utilizando o comando
+Como alternativa pode-se usar a imagem do docker hub `toninho09/jwt-micro-service`, que pode ser baixada utilizando o comando
  
- ````shell
- docker pull toninho09/firebase-auth-microservice
- ````
+````shell
+    docker pull toninho09/jwt-micro-service
+````
  
  
 # Serviços
 
 
-### [POST] /verify
+### [POST|GET] /verify
 
-Verifica se o token e válido, caso o token não seja valido, o HTTP_STATUS de retorno será 401
+Verifica se o token e válido, caso o token não seja valido, o HTTP_STATUS de retorno será 401,
+caso seja válido, será retornado os claims
 
 ##### request
 
 ````json
 {
-	"token":"eyJhbGciOiJSUzI1NiIsImt......"	
+	"token":"eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJNeVNlcnZpY2UiLCJkYXRhIjp7InJvdGUiOiJhZG1pbiIsInVzZXIiOjEyM30sImV4cCI6MTUyNzAwNTM2NiwiaWF0IjoxNTI3MDAxNzY2LCJpc3MiOiJBcGkiLCJzdWIiOiJNeVNlcnZpY2UifQ.SAtmA8Yf-oegPIer7LSWWZT6lR9h0oJkikhmAkneYNSt6an_D1WBUduJlJSLJDoAL86NHNfzx6-PNWV_hQfwubg95U_keEBcBiPPYSjEOHtH6n3f6duW66OgFjxQLXlB4FNhTEZod_cD5pCnjZs2s55-nVaepeZngy2Npog_3dw"	
 }
 ````
 
@@ -51,24 +49,34 @@ Verifica se o token e válido, caso o token não seja valido, o HTTP_STATUS de r
 
 ````json
 {
-	"iss": "https://securetoken.google.com/xxxxxxx",
-	"aud": "xxxxx",
-	"exp": 1513713402,
-	"iat": 1513709802,
-	"sub": "qPD5IBB....",
-	"uid": "qPD5IBB...."
+	"aud": "MyService",
+	"data": {
+		"rote": "admin",
+		"user": 123
+	},
+	"exp": 1527005366,
+	"iat": 1527001766,
+	"iss": "Api",
+	"sub": "MyService"
 }
 ````
 
-### [POST] /get-user
+### [POST|GET] /create
 
-Obtém as informações do usuário pelo firebase
+Cria um jwt através dos claims enviados, os dados adicionais devem estar dentro da propriedade `data`, todos
+os campos são opcionais
 
 ##### Request
 
 ````json
 {
-	"token":"eyJhbGciOiJSUzI1NiIsImt......"	
+	"sub":"MyService",
+	"iss":"Api",
+	"aud":"MyService",
+	"data":{
+		"user":123,
+		"rote":"admin"
+	}
 }
 ````
 
@@ -76,25 +84,7 @@ Obtém as informações do usuário pelo firebase
 
 ````json
 {
-	"displayName": "Display name",
-	"email": "email@email.com",
-	"photoUrl": "https://.../photo.jpg",
-	"localId": "localId",
-	"CustomClaims": null,
-	"Disabled": false,
-	"EmailVerified": true,
-	"ProviderUserInfo": [
-		{
-			"displayName": "Display name",
-			"email": "email@email.com",
-			"photoUrl": "https://.../photo.jpg",
-			"providerId": "google.com"
-		}
-	],
-	"UserMetadata": {
-		"CreationTimestamp": 1513099763000,
-		"LastLogInTimestamp": 1513100854000
-	}
+	"token": "eyJhbGciOiJSUzI1NiIsInR5cCI6IkpXVCJ9.eyJhdWQiOiJNeVNlcnZpY2UiLCJkYXRhIjp7InJvdGUiOiJhZG1pbiIsInVzZXIiOjEyM30sImV4cCI6MTUyNzAwNTM2NiwiaWF0IjoxNTI3MDAxNzY2LCJpc3MiOiJBcGkiLCJzdWIiOiJNeVNlcnZpY2UifQ.SAtmA8Yf-oegPIer7LSWWZT6lR9h0oJkikhmAkneYNSt6an_D1WBUduJlJSLJDoAL86NHNfzx6-PNWV_hQfwubg95U_keEBcBiPPYSjEOHtH6n3f6duW66OgFjxQLXlB4FNhTEZod_cD5pCnjZs2s55-nVaepeZngy2Npog_3dw"
 }
 ````
 
