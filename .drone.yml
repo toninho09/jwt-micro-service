@@ -1,7 +1,5 @@
 pipeline:
-  build:
-    image: golang
-    commands:
-      - go get
-      - go build
-      - go test
+  docker:
+    image: plugins/docker
+    repo: foo/bar
+    tags: latest
